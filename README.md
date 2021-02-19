@@ -1,5 +1,5 @@
 # Tensorflow Data and Deployment Specialization
-[Link to Coursera Specialization](https://www.coursera.org/specializations/tensorflow-data-and-deployment)
+[Link to Coursera Specialization](https://www.coursera.org/specializations/tensorflow-data-and-deployment)  
 [Link to Certification](https://coursera.org/share/2d75f094d95a6fc3977345adb48b93e9)
 
 - Course 1 - TensorFlow-JS [Certificate](https://github.com/giacomomiolo/tensorflow-data-and-deployment-specialization/blob/master/Course%201%20-%20TensorFlow-JS/Certificate%20Course%201.pdf)
