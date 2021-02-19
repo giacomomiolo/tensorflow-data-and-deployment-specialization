@@ -1,0 +1,90 @@
+<html>
+<head></head>
+    <!-- Import TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+
+    <script lang="js">
+        
+        async function run(){
+            // Training data
+            const trainingUrl = 'wdbc-train.csv';
+            const trainingData = tf.data.csv(
+                trainingUrl, {
+                    columnConfigs: {
+                        diagnosis: {
+                            isLabel: true
+                        }
+                    }
+                });
+            const convertedTrainingData = trainingData.map(({xs, ys}) => {
+                return {xs:Object.values(xs), ys:Object.values(ys)};
+            }).batch(10);
+
+            // Testing data
+            const testingUrl = 'wdbc-test.csv';
+            const testingData = tf.data.csv(
+                testingUrl, {
+                    columnConfigs: {
+                        diagnosis: {
+                            isLabel: true
+                        }
+                    }
+                });
+            const convertedTestingData = testingData.map(({xs, ys}) => {
+                return {xs:Object.values(xs), ys:Object.values(ys)};
+            }).batch(10);
+                  
+            // Number of features
+            const numOfFeatures = (await trainingData.columnNames()).length - 1;
+            
+                
+            // In the space below create a neural network that predicts 1 if the diagnosis is malignant
+            // and 0 if the diagnosis is benign. Your neural network should only use dense
+            // layers and the output layer should only have a single output unit with a
+            // sigmoid activation function. You are free to use as many hidden layers and
+            // neurons as you like.  
+            // HINT: Make sure your input layer has the correct input shape. We also suggest
+            // using ReLu activation functions where applicable. For this dataset only a few
+            // hidden layers should be enough to get a high accuracy.  
+            const model = tf.sequential();
+            
+            model.add(tf.layers.dense({
+                inputShape: [numOfFeatures],
+                activation: "relu",
+                units: 8
+            }));
+            model.add(tf.layers.dense({
+                activation: "relu",
+                units: 16
+            }));
+            model.add(tf.layers.dense({
+                activation: "relu",
+                units: 8
+            }));
+            model.add(tf.layers.dense({
+                activation: "sigmoid",
+                units: 1
+            }));
+
+            model.compile({
+                loss: "binaryCrossentropy",
+                optimizer: tf.train.rmsprop(0.05),
+                metrics:['accuracy']
+            });
+            
+            
+            await model.fitDataset(convertedTrainingData, 
+                             {epochs:50,
+                              validationData: convertedTestingData,
+                              callbacks:{
+                                  onEpochEnd: async(epoch, logs) =>{
+                                      console.log("Epoch: " + epoch + " Loss: " + logs.loss + " Accuracy: " + logs.acc + " Validation Accuracy:" + logs.val_acc);
+                                  }
+                              }});
+            await model.save('downloads://my_model');
+        }
+        run();
+    </script>
+<body>
+</body>
+</html>
